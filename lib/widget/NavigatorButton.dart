@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class NavigatorButton extends StatelessWidget {
   final String textitem;
-  VoidCallback onTap;
-   NavigatorButton({super.key, required this.textitem,required this.onTap});
+  final VoidCallback onTap;
+  final bool isloading;
+  NavigatorButton({super.key, required this.textitem, required this.onTap,this.isloading=false});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +16,8 @@ class NavigatorButton extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.black,
             borderRadius: BorderRadius.all(Radius.circular(20))),
-        child: Center(
-            child: Text(
+        child:  Center(
+            child: isloading ? CircularProgressIndicator(strokeWidth: 2,color: Colors.white,) :Text(
           textitem,
           style: TextStyle(color: Colors.white),
         )),

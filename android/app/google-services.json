@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1045891697527",
+    "project_id": "gym-app-rushtech360",
+    "storage_bucket": "gym-app-rushtech360.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045891697527:android:6dab960d4cbe86b5376f72",
+        "android_client_info": {
+          "package_name": "com.rushtech.gym_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045891697527-vgar2427q6fcis3a940a0geusblhjii7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4XHsyayFMfewkY326bIfxokceZx7AqI8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1045891697527-vgar2427q6fcis3a940a0geusblhjii7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/animations/animations.dart';
 import 'package:gym_app/widget/NavigatorButton.dart';
 import 'package:gym_app/RegisterScreens/RegisterAccount.dart';
 import 'package:gym_app/widget/ReusableButton.dart';
-import 'package:gym_app/survey/survey.dart';
 import 'package:gym_app/widget/textField.dart';
 
 class MainScreen extends StatefulWidget {
@@ -13,6 +13,11 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final TextEditingController _email=TextEditingController();
+   final TextEditingController _password=TextEditingController();
+
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -90,6 +95,8 @@ class _MainScreenState extends State<MainScreen> {
                         icon: Icon(
                           Icons.drive_file_rename_outline,
                         ),
+                        obscure: false, controller: _email,
+                       
                       ),
                       SizedBox(
                         height: 10,
@@ -99,6 +106,9 @@ class _MainScreenState extends State<MainScreen> {
                         icon: Icon(
                           Icons.lock,
                         ),
+                        obscure: false,
+                        controller:_password ,
+                        
                       ),
                       SizedBox(
                         height: 10,
@@ -111,30 +121,26 @@ class _MainScreenState extends State<MainScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: ((context) => SurveyDialog())));
+                                      builder: ((context) =>
+                                          AnimationScreen())));
                             },
                           )),
                       SizedBox(
                         height: 10,
                       ),
-
-                     
                     ]),
-                     Align(
-            alignment: Alignment.topRight,
-             child: Container(
-              height: 30,
-              
-              width: 30,
-               child: Center(child: Text('?')),
-               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey.shade100,
-                border: Border.all(
-                color: Colors.black
-               )),
-             ),
-           ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    child: Center(child: Text('?')),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.shade100,
+                        border: Border.all(color: Colors.black)),
+                  ),
+                ),
               ],
             ),
           ),

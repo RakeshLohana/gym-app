@@ -2,11 +2,20 @@ import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final String textitem;
-   final Icon icon;
-   TextFieldWidget({super.key, required this.textitem, required this.icon });
+  final Icon icon;
+  final bool obscure;
+  final TextEditingController controller;
+  final void Function(String)? onSaved;
+  TextFieldWidget({
+    super.key,
+    required this.textitem,
+    required this.icon,
+    required this.obscure, required this.controller, this.onSaved,
+  });
 
   @override
   Widget build(BuildContext context) {
+    var widget;
     return Container(
       height: 60,
       decoration: BoxDecoration(
@@ -32,6 +41,8 @@ class TextFieldWidget extends StatelessWidget {
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextFormField(
+                  obscureText: obscure,
+                  controller: controller,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
                       prefixIcon: icon,
