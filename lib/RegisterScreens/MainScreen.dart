@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_app/animations/animations.dart';
+import 'package:gym_app/animations/survey.dart';
 import 'package:gym_app/widget/NavigatorButton.dart';
 import 'package:gym_app/RegisterScreens/RegisterAccount.dart';
 import 'package:gym_app/widget/ReusableButton.dart';
 import 'package:gym_app/widget/textField.dart';
+import 'package:gym_app/workoutScreen/WorkoutScreen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,10 +15,17 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final TextEditingController _email=TextEditingController();
-   final TextEditingController _password=TextEditingController();
-
-
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isloading = false;
+  final _auth = FirebaseAuth.instance;
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,97 +47,190 @@ class _MainScreenState extends State<MainScreen> {
                         height: 350,
                       )),
                 ),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Daily',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Text(
-                        'Workout',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 35,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'start Today !',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 240,
-                      ),
-                      ReusableButton(
-                        textitem: 'Register New Account',
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => RegisterAccount())));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Or',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          )),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFieldWidget(
-                        textitem: 'Username',
-                        icon: Icon(
-                          Icons.drive_file_rename_outline,
+                Form(
+                  key: _formKey,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Daily',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w400),
                         ),
-                        obscure: false, controller: _email,
-                       
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFieldWidget(
-                        textitem: 'Password',
-                        icon: Icon(
-                          Icons.lock,
+                        Text(
+                          'Workout',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold),
                         ),
-                        obscure: false,
-                        controller:_password ,
-                        
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                          alignment: Alignment.bottomRight,
-                          child: NavigatorButton(
-                            textitem: 'GO',
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: ((context) =>
-                                          AnimationScreen())));
-                            },
-                          )),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ]),
+                        Text(
+                          'start Today !',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 240,
+                        ),
+                        ReusableButton(
+                          textitem: 'Register New Account',
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => RegisterAccount())));
+                          },
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Or',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFieldWidget(
+                          textitem: 'Email',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your email';
+                            }
+
+                            final emailRegex = RegExp(
+                                r'^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$');
+                            if (!emailRegex.hasMatch(value)) {
+                              return 'Please enter a valid email address';
+                            }
+
+                            return null;
+                          },
+                          icon: Icon(
+                            Icons.alternate_email_outlined,
+                          ),
+                          obscure: false,
+                          controller: _email,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFieldWidget(
+                          textitem: 'Password',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters long';
+                            }
+
+                            // You can add more password validation logic if required
+
+                            return null;
+                          },
+                          icon: Icon(
+                            Icons.lock,
+                          ),
+                          obscure: true,
+                          controller: _password,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Align(
+                            alignment: Alignment.bottomRight,
+                            child: NavigatorButton(
+                              isloading: isloading,
+                              textitem: 'GO',
+                              onTap: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isloading = true;
+                                  });
+                                  _formKey.currentState!.save();
+                                  try {
+                                    final newUser = await _auth
+                                        .signInWithEmailAndPassword(
+                                      email: _email.text,
+                                      password: _password.text,
+                                    )
+                                        .then((value) {
+                                      _email.clear();
+                                      _password.clear();
+                                      setState(() {
+                                        isloading = false;
+                                      });
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          duration: Duration(seconds: 3),
+                                          content:
+                                              const Text('Login Successfull'),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                    .size
+                                                    .height -
+                                                100,
+                                            left: 10,
+                                            right: 10,
+                                          ),
+                                        ),
+                                      );
+
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: ((context) =>
+                                                  WorkoutScreen())));
+                                    }).onError((error, stackTrace) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          duration: Duration(seconds: 3),
+                                          content: const Text('Error Occured'),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                    .size
+                                                    .height -
+                                                100,
+                                            left: 10,
+                                            right: 10,
+                                          ),
+                                        ),
+                                      );
+
+                                      setState(() {
+                                        isloading = false;
+                                      });
+                                    });
+
+                                    if (newUser != null) {
+                                      // Registration successful, do something
+                                    }
+                                  } catch (e) {
+                                    // Registration failed, handle the error
+                                  }
+                                }
+                              },
+                            )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ]),
+                ),
                 Align(
                   alignment: Alignment.topRight,
                   child: Container(

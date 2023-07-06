@@ -17,7 +17,7 @@ class NavigatorButton extends StatelessWidget {
             color: Colors.black,
             borderRadius: BorderRadius.all(Radius.circular(20))),
         child:  Center(
-            child: isloading ? CircularProgressIndicator(strokeWidth: 2,color: Colors.white,) :Text(
+            child: isloading ? CircularProgressIndicator(strokeWidth: 1,color: Colors.white,) :Text(
           textitem,
           style: TextStyle(color: Colors.white),
         )),

@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gym_app/workoutScreen/WorkoutScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AnimationScreen extends StatefulWidget {
   @override
@@ -92,6 +94,8 @@ class _AnimationScreenState extends State<AnimationScreen>
   int currentQuestionIndex = 0;
   double sliderValue = 0.0;
   bool surveyCompleted = false;
+  final fireStore = FirebaseFirestore.instance.collection('surveyData1');
+  List<Map<String, dynamic>> surveyDataList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -165,30 +169,7 @@ class _AnimationScreenState extends State<AnimationScreen>
                     child: Column(
                       children: [
                         Stack(
-                          
                           children: [
-                  //           Positioned(
-                  //             top: 15,
-                  // right: 30,
-                  // left: 40,
-                  //             child: Container(
-                  //               height: 335,
-                  //               width: 200,
-                  //               decoration: BoxDecoration(
-                  //                 borderRadius: BorderRadius.circular(20),
-                  //           boxShadow: [
-                  //                         BoxShadow(
-                  //                   color: Colors.grey.shade800,
-                  //                   blurRadius: 20.0, // soften the shadow
-                  //                   spreadRadius: 3.0, //extend the shadow
-                  //                   offset: Offset(
-                  //                     -5.0, // Move to right 5  horizontally
-                  //                     5.0, // Move to bottom 5 Vertically
-                  //                   ),)
-                  //           ]
-                  //               ),
-                  //             ),
-                  //           ),
                             if (!surveyCompleted)
                               Dialog(
                                 shadowColor: Colors.grey,
@@ -235,8 +216,7 @@ class _AnimationScreenState extends State<AnimationScreen>
                                                 duration: const Duration(
                                                     milliseconds: 500),
                                                 childAnimationBuilder:
-                                                    (widget) =>
-                                                        SlideAnimation(
+                                                    (widget) => SlideAnimation(
                                                   verticalOffset: 50.0,
                                                   child: FadeInAnimation(
                                                     child: widget,
@@ -271,6 +251,20 @@ class _AnimationScreenState extends State<AnimationScreen>
                                         SizedBox(height: 16.0),
                                         ElevatedButton(
                                           onPressed: () {
+                                              final user1= FirebaseAuth.instance.currentUser;
+                                              final email = user1!.email;
+                                            String id = DateTime.now()
+                                                .millisecondsSinceEpoch
+                                                .toString();
+                                            fireStore.doc(email).set({
+                                              'surveyData': surveyDataList,
+                                              // 'question': questions[currentQuestionIndex - 1],
+                                              // 'answer:': option
+                                            }).then((value) {
+                                              print('Data sent successfully');
+                                            }).onError((error, stackTrace) {
+                                              print('Error occured');
+                                            });
                                             Navigator.pop(
                                                 context); // Close the "Thank you" dialog
                                             Navigator.push(
@@ -324,9 +318,15 @@ class _AnimationScreenState extends State<AnimationScreen>
 
     return currentOptions.map((option) {
       return ChoiceButton(
-        text: option,
-        onPressed: () => showNextQuestion(),
-      );
+          text: option,
+          onPressed: () {
+            showNextQuestion();
+            Map<String, dynamic> surveyData = {
+              'question': questions[currentQuestionIndex - 1],
+              'selectedOption': option,
+            };
+            surveyDataList.add(surveyData);
+          });
     }).toList();
   }
 
@@ -340,6 +340,17 @@ class _AnimationScreenState extends State<AnimationScreen>
       setState(() {
         surveyCompleted = true;
       });
+
+      // DocumentReference surveyDocRef =
+      //     FirebaseFirestore.instance.collection('surveyData').doc();
+      // // surveyDocRef.set({
+      //   'question': questions[currentQuestionIndex],
+      //   'selectedOptions': selectedOptions,
+      // }).then((value) {
+      //   print('Data sent to Firestore');
+      // }).catchError((error) {
+      //   print('Error occurred: $error');
+      // });
     }
   }
 }

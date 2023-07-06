@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app/survey/survey.dart';
+import 'package:gym_app/Error/survey.dart';
 
 class NewScreen extends StatefulWidget {
   const NewScreen({super.key});

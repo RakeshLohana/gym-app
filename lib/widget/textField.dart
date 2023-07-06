@@ -6,19 +6,23 @@ class TextFieldWidget extends StatelessWidget {
   final bool obscure;
   final TextEditingController controller;
   final void Function(String)? onSaved;
+  final FormFieldValidator<String>? validator; // Added validator property
+
   TextFieldWidget({
     super.key,
     required this.textitem,
     required this.icon,
-    required this.obscure, required this.controller, this.onSaved,
+    required this.obscure, required this.controller, this.onSaved, this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    var widget;
     return Container(
-      height: 60,
+      height: 70,
+      
       decoration: BoxDecoration(
+        
+        
           color: Colors.white,
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.all(
@@ -41,10 +45,14 @@ class TextFieldWidget extends StatelessWidget {
             child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextFormField(
+                  validator: validator,
+                  
                   obscureText: obscure,
                   controller: controller,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
+                    errorStyle: TextStyle(color: Colors.black),
+
                       prefixIcon: icon,
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,

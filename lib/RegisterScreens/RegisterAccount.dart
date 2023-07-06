@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_app/animations/animations.dart';
+import 'package:gym_app/animations/survey.dart';
 import 'package:gym_app/widget/NavigatorButton.dart';
 import 'package:gym_app/widget/textField.dart';
+import 'package:gym_app/workoutScreen/WorkoutContainer.dart';
 import 'package:gym_app/workoutScreen/WorkoutScreen.dart';
 
 class RegisterAccount extends StatefulWidget {
@@ -13,7 +14,7 @@ class RegisterAccount extends StatefulWidget {
 }
 
 class _RegisterAccountState extends State<RegisterAccount> {
-   bool isloading = false;
+  bool isloading = false;
   final _formKey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
   final TextEditingController _firstName = TextEditingController();
@@ -21,7 +22,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirPassword = TextEditingController();
-  final TextEditingController _gender = TextEditingController();
+  // final TextEditingController _gender = TextEditingController();
 
   final List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 
@@ -34,6 +35,16 @@ class _RegisterAccountState extends State<RegisterAccount> {
     'Female',
     'Other',
   ];
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    _firstName.dispose();
+    _lastName.dispose();
+    _confirPassword.dispose();
+    _password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +91,13 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         ),
                         TextFieldWidget(
                           textitem: 'First Name',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your First Name';
+                            }
+
+                            return null;
+                          },
                           icon: Icon(Icons.person_outline),
                           obscure: false,
                           controller: _firstName,
@@ -89,6 +107,13 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         ),
                         TextFieldWidget(
                           textitem: 'Last Name',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your First Name';
+                            }
+
+                            return null;
+                          },
                           icon: Icon(Icons.person_2_outlined),
                           obscure: false,
                           controller: _lastName,
@@ -134,7 +159,6 @@ class _RegisterAccountState extends State<RegisterAccount> {
                               },
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'Select an item',
                               ),
                             ),
                           ),
@@ -144,6 +168,19 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         ),
                         TextFieldWidget(
                           textitem: 'email',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your email';
+                            }
+
+                            final emailRegex = RegExp(
+                                r'^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$');
+                            if (!emailRegex.hasMatch(value)) {
+                              return 'Please enter a valid email address';
+                            }
+
+                            return null;
+                          },
                           icon: Icon(
                             Icons.alternate_email_outlined,
                           ),
@@ -155,6 +192,16 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         ),
                         TextFieldWidget(
                           textitem: 'Password',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters long';
+                            }
+
+                            return null;
+                          },
                           icon: Icon(
                             Icons.lock,
                           ),
@@ -166,6 +213,16 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         ),
                         TextFieldWidget(
                           textitem: 'Confirm Password',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please confirm your password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters long';
+                            }
+
+                            return null;
+                          },
                           icon: Icon(
                             Icons.lock,
                           ),
@@ -178,7 +235,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         Align(
                             alignment: Alignment.bottomRight,
                             child: NavigatorButton(
-                              isloading: isloading,
+                                isloading: isloading,
                                 textitem: 'GO',
                                 onTap: () async {
                                   if (_formKey.currentState!.validate()) {
@@ -191,32 +248,67 @@ class _RegisterAccountState extends State<RegisterAccount> {
                                           .createUserWithEmailAndPassword(
                                         email: _email.text,
                                         password: _password.text,
+                                      )
+                                          .then((value) {
                                         
-                                        
-                                        
-                                      ).then((value) {
-                                          setState(() {
-                                      isloading = false;
-                                    });
-                                        
-                                      }).onError((error, stackTrace){  
-                                        setState(() {
-                                      isloading = false;
-                                    });
-
-                                      });
-                                     
-                                      if (newUser != null) {
-                                        // Registration successful, do something
-                                       
-                                        Navigator.push(
+                                        _email.clear();
+                                        _password.clear();
+                                        _firstName.clear();
+                                        _lastName.clear();
+                                        _confirPassword.clear();
+                                        _password.clear();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            duration: Duration(seconds: 3),
+                                            content: const Text(
+                                                'Registered Successfull'),
+                                            behavior: SnackBarBehavior.floating,
+                                            margin: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .height -
+                                                  100,
+                                              left: 10,
+                                              right: 10,
+                                            ),
+                                          ),
+                                        );
+                                            Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: ((context) =>
                                                     AnimationScreen())));
-                                      }
+                                        setState(() {
+                                          isloading = false;
+                                        });
+
+                                        
+                                      }).onError((error, stackTrace) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            duration: Duration(seconds: 3),
+                                            content:
+                                                const Text('Error Occured '),
+                                            behavior: SnackBarBehavior.floating,
+                                            margin: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .height -
+                                                  100,
+                                              left: 10,
+                                              right: 10,
+                                            ),
+                                          ),
+                                        );
+                                        setState(() {
+                                          isloading = false;
+                                        });
+                                      });
+
+                                  
                                     } catch (e) {
-                                    
                                       // Registration failed, handle the error
                                     }
                                   }
