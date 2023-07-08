@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_app/RegisterScreens/MainScreen.dart';
+import 'package:gym_app/Todays%20Workout/todaysWorkout.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +36,6 @@ class MyApp extends StatelessWidget {
           // colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
           useMaterial3: true,
         ),
-        home: MainScreen());
+        home: TodaysWorkout());
   }
 }

@@ -251,15 +251,14 @@ class _AnimationScreenState extends State<AnimationScreen>
                                         SizedBox(height: 16.0),
                                         ElevatedButton(
                                           onPressed: () {
-                                              final user1= FirebaseAuth.instance.currentUser;
-                                              final email = user1!.email;
+                                            final user1 = FirebaseAuth
+                                                .instance.currentUser;
+                                            final email = user1!.email;
                                             String id = DateTime.now()
-                                                .millisecondsSinceEpoch
+                                                .second
                                                 .toString();
-                                            fireStore.doc(email).set({
+                                            fireStore.doc(email! + id).set({
                                               'surveyData': surveyDataList,
-                                              // 'question': questions[currentQuestionIndex - 1],
-                                              // 'answer:': option
                                             }).then((value) {
                                               print('Data sent successfully');
                                             }).onError((error, stackTrace) {
@@ -315,16 +314,26 @@ class _AnimationScreenState extends State<AnimationScreen>
 
   List<Widget> getOptions() {
     List<String> currentOptions = options[currentQuestionIndex];
+    Map<String, dynamic> surveyData = {};
 
     return currentOptions.map((option) {
       return ChoiceButton(
           text: option,
           onPressed: () {
             showNextQuestion();
-            Map<String, dynamic> surveyData = {
-              'question': questions[currentQuestionIndex - 1],
-              'selectedOption': option,
-            };
+
+            if (currentQuestionIndex ==6) {
+              surveyData = {
+                'question': questions[7],
+                'selectedOption': option,
+              };
+            } else {
+              surveyData = {
+                'question': questions[currentQuestionIndex-1],
+                'selectedOption': option,
+              };
+            }
+
             surveyDataList.add(surveyData);
           });
     }).toList();

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:gym_app/animations/survey.dart';
 import 'package:gym_app/widget/NavigatorButton.dart';
 import 'package:gym_app/widget/textField.dart';
-import 'package:gym_app/workoutScreen/WorkoutContainer.dart';
-import 'package:gym_app/workoutScreen/WorkoutScreen.dart';
 
 class RegisterAccount extends StatefulWidget {
   const RegisterAccount({super.key});
@@ -214,6 +212,11 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         TextFieldWidget(
                           textitem: 'Confirm Password',
                           validator: (value) {
+                            if(value!=_password.text){
+                              return 'Password and Confirm Password does not match';
+
+                            }
+                            
                             if (value!.isEmpty) {
                               return 'Please confirm your password';
                             }
@@ -330,7 +333,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
                                 Navigator.pop(context);
                               },
                               child: Text(
-                                'Sig in',
+                                'Sign in',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 22,
